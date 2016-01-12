@@ -1,0 +1,14 @@
+{
+    "name": "pleio/birthdays",
+    "description": "Shows the birthdays of your community users.",
+    "type": "elgg-plugin",
+    "keywords": ["elgg", "plugin", "birthdays"],
+    "license": "GPL-2.0",
+    "support": {
+        "source": "https://github.com/Pleio/birthdays",
+        "issues": "https://github.com/Pleio/birthdays/issues"
+    },
+    "require": {
+        "composer/installers": "^1.0.8"
+    }
+}
