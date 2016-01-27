@@ -9,7 +9,8 @@ $english = array(
     'birthdays:profile_field:type' => 'Birthday',
     'birthdays:widget:title' => 'Birthdays',
     'birthdays:widget:description' => 'Show the upcoming birthdays.',
-    'birthdays:widget:none' => 'No upcoming birthdays.'
+    'birthdays:widget:none' => 'No upcoming birthdays.',
+    'birthdays:widget:not_configured' => 'The birthday plugin is not configured. Ask the site manager to configure the birthday field.'
 );
 
 add_translation("en", $english);

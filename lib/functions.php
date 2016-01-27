@@ -48,6 +48,11 @@ function birthdays_get_configered_interval() {
 function birthdays_get_upcoming_user_guids() {
 	$site = elgg_get_site_entity();
 	$today = (int) date("z") + 1;
+	$field = birthdays_get_configured_birthday_field();
+
+	if (!$field) {
+		return false;
+	}
 
 	if (is_memcache_available()) {
 		$memcache = new ElggMemcache('birthdays_' . $site->guid);
@@ -67,7 +72,7 @@ function birthdays_get_upcoming_user_guids() {
 	}
 
 	$dbprefix = elgg_get_config('dbprefix');
-	$field = mysql_real_escape_string(birthdays_get_configured_birthday_field());
+	$field = mysql_real_escape_string($field);
 
 	$sql = "SELECT
 		e.guid,
@@ -84,7 +89,7 @@ function birthdays_get_upcoming_user_guids() {
 		msn.string = '{$field}'
 		HAVING birthday BETWEEN {$left} AND {$right}
 		ORDER BY birthday
-		LIMIT 20";
+		LIMIT 25";
 
 	$users = get_data($sql);
 
@@ -100,22 +105,33 @@ function birthdays_get_upcoming_user_guids() {
 	return $return;
 }
 
-function birthdays_get_upcoming_users() {
+function birthdays_get_upcoming_users($limit = 10) {
+	if (!birthdays_get_configured_birthday_field()) {
+		return false;
+	}
+
+	$limit = (int) $limit;
 	$user_guids = birthdays_get_upcoming_user_guids();
 
 	if ($user_guids) {
 		$users = elgg_get_entities(array(
 			'guids' => $user_guids,
 			'type' => 'user',
-			'limit' => 20,
+			'limit' => $limit,
 			'order_by' => null
 		));
+
+		// order on birthday
 		$order = array_flip($user_guids);
 		usort($users, function($a, $b) use ($order) {
 			return ($order[$a->guid] < $order[$b->guid]) ? -1 : 1;
 		});
 
-		return $users;
+		if ($limit < 10) {
+			return array_slice($users, 0, $limit);
+		} else {
+			return $users;
+		}
 	} else {
 		return array();
 	}
