@@ -54,21 +54,10 @@ function birthdays_get_upcoming_user_guids() {
 		return false;
 	}
 
-	if (is_memcache_available()) {
-		$memcache = new ElggMemcache('birthdays_' . $site->guid);
-		$cache = $memcache->load($today);
-		if ($cache) {
-			return unserialize($cache);
-		}
-	}
-
-	$left = (int) $today;
-	$right = (int) $today + birthdays_get_configered_interval();
-
 	if (date("w") == 1) { // Mondays
-		$left -= 2;
+		$today -= 2;
 	} elseif (date("w") == 2) { // Tuesdays
-		$left -= 1;
+		$today -= 1;
 	}
 
 	$dbprefix = elgg_get_config('dbprefix');
@@ -87,7 +76,7 @@ function birthdays_get_upcoming_user_guids() {
 		r.relationship = 'member_of_site' AND
 		r.guid_two = {$site->guid} AND
 		msn.string = '{$field}'
-		HAVING birthday BETWEEN {$left} AND {$right}
+		HAVING birthday >= $today
 		ORDER BY birthday
 		LIMIT 25";
 
@@ -96,10 +85,6 @@ function birthdays_get_upcoming_user_guids() {
 	$return = array();
 	foreach ($users as $user) {
 		$return[] = $user->guid;
-	}
-
-	if (is_memcache_available()) {
-		$memcache->save($today, serialize($return));
 	}
 
 	return $return;

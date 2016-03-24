@@ -28,16 +28,3 @@ if (!empty($available_fields)) {
 }
 
 echo elgg_view_module("inline", elgg_echo("birthdays:settings:field_selection"), $field_selection);
-
-// other
-$other = "<div>";
-$other .= elgg_echo("birthdays:settings:interval");
-$other .= "&nbsp;" . elgg_view("input/dropdown", array(
-	"name" => "params[interval]",
-	"options" => array(7,14,21),
-	"value" => $plugin->interval
-));
-$other .= "&nbsp;" . elgg_echo("birthdays:settings:interval:days");
-$other .= "</div>";
-
-echo elgg_view_module("inline", elgg_echo("birthdays:settings:other"), $other);
