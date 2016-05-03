@@ -99,24 +99,19 @@ function birthdays_get_upcoming_users($limit = 10) {
 	$user_guids = birthdays_get_upcoming_user_guids();
 
 	if ($user_guids) {
-		$users = elgg_get_entities(array(
-			'guids' => $user_guids,
-			'type' => 'user',
-			'limit' => $limit,
-			'order_by' => null
-		));
+		$users = array();
 
-		// order on birthday
-		$order = array_flip($user_guids);
-		usort($users, function($a, $b) use ($order) {
-			return ($order[$a->guid] < $order[$b->guid]) ? -1 : 1;
-		});
+		$i = 0;
+		foreach ($user_guids as $user_guid) {
+			$users[] = get_entity($user_guid);
 
-		if ($limit < 10) {
-			return array_slice($users, 0, $limit);
-		} else {
-			return $users;
+			$i++;
+			if ($i == $limit) {
+				break;
+			}
 		}
+
+		return $users;
 	} else {
 		return array();
 	}
