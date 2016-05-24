@@ -47,7 +47,7 @@ function birthdays_get_configered_interval() {
 
 function birthdays_get_upcoming_user_guids() {
 	$site = elgg_get_site_entity();
-	$today = (int) date("z") + 1;
+	$today = (int) date("z");
 	$field = birthdays_get_configured_birthday_field();
 
 	if (!$field) {
