@@ -23,17 +23,7 @@ function birthdays_get_available_profile_fields() {
 }
 
 function birthdays_get_configured_birthday_field() {
-	static $result;
-
-	if (!isset($result)) {
-		$result = false;
-
-		if ($setting = elgg_get_plugin_setting("birthday_field", "birthdays")) {
-			$result = $setting;
-		}
-	}
-
-	return $result;
+	return elgg_get_plugin_setting("birthday_field", "birthdays");
 }
 
 function birthdays_get_configered_interval() {
@@ -61,7 +51,7 @@ function birthdays_get_upcoming_user_guids() {
 	}
 
 	$dbprefix = elgg_get_config('dbprefix');
-	$field = mysql_real_escape_string($field);
+	$field_id = (int) get_metastring_id($field);
 
 	$sql = "SELECT
 		e.guid,
@@ -69,13 +59,12 @@ function birthdays_get_upcoming_user_guids() {
 		FROM {$dbprefix}entities e
 		JOIN {$dbprefix}entity_relationships r ON r.guid_one = e.guid
 		JOIN {$dbprefix}metadata m ON e.guid = m.entity_guid
-		JOIN {$dbprefix}metastrings msn ON m.name_id = msn.id
 		JOIN {$dbprefix}metastrings msv ON m.value_id = msv.id
 		WHERE
 		e.type = 'user' AND
 		r.relationship = 'member_of_site' AND
 		r.guid_two = {$site->guid} AND
-		msn.string = '{$field}'
+		m.name_id = $field_id
 		HAVING birthday >= $today
 		ORDER BY birthday
 		LIMIT 25";
